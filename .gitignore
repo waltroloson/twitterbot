@@ -1,0 +1,9 @@
+*.metadata
+*.DS_Store
+*.o
+*.project
+*.cproject
+*.settings
+*.idea
+*.pyc
+README.html
