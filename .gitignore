@@ -6,4 +6,6 @@
 *.settings
 *.idea
 *.pyc
+inputs/
+outputs/
 README.html
