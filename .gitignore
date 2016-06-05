@@ -1,0 +1,11 @@
+*.metadata
+*.DS_Store
+*.o
+*.project
+*.cproject
+*.settings
+*.idea
+*.pyc
+inputs/
+outputs/
+README.html
