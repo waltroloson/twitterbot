@@ -1,9 +1,10 @@
-__author__ = 'Jacek Aleksander Gruca'
-
 import argparse
 
 from _lib.FileIo import FileIo
 from _lib.Handler import Handler
+from _lib.Utils import Utils
+
+__author__ = 'Jacek Aleksander Gruca'
 
 FIELD_NAMES = ['Name', 'Job Title', 'Company', 'LinkedIn', 'Twitter', 'SIQ', 'Notes']
 
@@ -16,12 +17,12 @@ parser.add_argument('INPUT_FILE', action='store', help='read handles from input 
 
 args = parser.parse_args()
 
-csvHelper = FileIo(FIELD_NAMES)
+fileIo = FileIo(FIELD_NAMES)
 handler = Handler()
 
-rows = csvHelper.get_file_as_rows(args.INPUT_FILE, 'Twitter')
+handles = Utils.get_column(fileIo.get_file_as_rows(args.INPUT_FILE, 'Twitter'), 'Twitter')
 
-for row in rows:
-	print repr(row)
+for handle in handles:
+	print handle
 
-handler.run(row['Twitter'])
+handler.run(handles)
