@@ -7,7 +7,6 @@ __author__ = 'Jacek Aleksander Gruca'
 class TwitterApi(object):
 	#
 	def __init__(self, consumer_token, consumer_secret, access_token, access_token_secret):
-		print consumer_token, consumer_secret, access_token, access_token_secret
 		auth = tweepy.OAuthHandler(consumer_token, consumer_secret)
 		auth.set_access_token(access_token, access_token_secret)
 		self.api = tweepy.API(auth)

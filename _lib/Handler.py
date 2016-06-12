@@ -13,7 +13,7 @@ class Handler(object):
 	def __init__(self, twitter_api, batch_count, day_count):
 		self.batch_count = batch_count
 		self.day_count = day_count
-		self.twitter_api = twitter_api
+		self.api = twitter_api
 		self.queue = Queue()
 		self.store = PersistentStore()
 

@@ -20,8 +20,8 @@ args = parser.parse_args()
 config = ConfigParser.ConfigParser()
 config.read('config.ini')
 
-batch_count = config.get('TwitterBot', 'handle.batch.count')
-day_count = config.get('TwitterBot', 'day.count')
+batch_count = int(config.get('TwitterBot', 'handle.batch.count'))
+day_count = int(config.get('TwitterBot', 'day.count'))
 
 df = pandas.read_csv(args.INPUT_FILE)
 handles = df[pandas.notnull(df.Twitter)].Twitter.values.tolist()

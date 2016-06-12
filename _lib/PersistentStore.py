@@ -1,9 +1,15 @@
+from pymongo import MongoClient
+
 __author__ = 'Jacek Aleksander Gruca'
 
 
 # This class provides persistence abstraction.
 class PersistentStore(object):
 	#
+	def __init__(self):
+		self.client = MongoClient()
+		self.db = self.client.test
+
 	def get_all_items(self):
 		return ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p']
 
