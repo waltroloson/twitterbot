@@ -1,6 +1,3 @@
-import csv
-import pandas
-
 __author__ = 'Jacek Aleksander Gruca'
 
 

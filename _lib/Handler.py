@@ -3,7 +3,6 @@ from datetime import timedelta
 from dateutil.relativedelta import relativedelta
 
 from _lib.Queue import Queue
-from _lib.TwitterApi import TwitterApi
 from _lib.PersistentStore import PersistentStore
 
 __author__ = 'Jacek Aleksander Gruca'
@@ -11,9 +10,11 @@ __author__ = 'Jacek Aleksander Gruca'
 
 class Handler(object):
 	#
-	def __init__(self):
+	def __init__(self, twitter_api, batch_count, day_count):
+		self.batch_count = batch_count
+		self.day_count = day_count
+		self.twitter_api = twitter_api
 		self.queue = Queue()
-		self.api = TwitterApi()
 		self.store = PersistentStore()
 
 	def delete_removed_items(self, handles):
@@ -39,8 +40,8 @@ class Handler(object):
 
 		self.delete_removed_items(handles)
 		self.append_added_items(handles)
-		self.unfollow_all_handles_marked_in_last_n_days("followed_on", 30)
-		self.unfollow_all_handles_marked_in_last_n_days("unfollowed_on_purpose", 30)
+		self.unfollow_all_handles_marked_in_last_n_days("followed_on", self.day_count)
+		self.unfollow_all_handles_marked_in_last_n_days("unfollowed_on_purpose", self.day_count)
 
 		items_followed_in_the_past_year = self.store.get_all_items_with_property_gte(
 			"followed_on", datetime.now() - relativedelta(years=1))
@@ -62,7 +63,7 @@ class Handler(object):
 				self.queue.remove_items(handle)
 				self.queue.append_items(handle)
 				continue
-			if i >= 50:
+			if i >= self.batch_count:
 				print "Concluding execution.."
 				break
 			self.api.follow(handle)
