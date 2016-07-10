@@ -10,16 +10,37 @@ class TwitterApi(object):
 		auth = tweepy.OAuthHandler(consumer_token, consumer_secret)
 		auth.set_access_token(access_token, access_token_secret)
 		self.api = tweepy.API(auth)
-		public_tweets = self.api.home_timeline()
 
-		for tweet in public_tweets:
-			print tweet.text
+	def follow(self, handles_to_follow):
+
+		for handle_to_follow in handles_to_follow:
+			print handle_to_follow
+			if not self.is_followed_by_me(handle_to_follow):
+				if not self.api.create_friendship(handle_to_follow):
+					return False
+
+		return True
 
 	def unfollow(self, handles_to_unfollow):
-		return
+
+		for handle_to_unfollow in handles_to_unfollow:
+			if not self.api.destroy_friendship(handle_to_unfollow):
+				return False
+
+		return True
 
 	def follows_me(self, handle):
-		return False
+		friendship = self.api.show_friendship(
+			source_screen_name=str(self.api.me().screen_name),
+			target_screen_name=handle)[0]
+
+		print friendship
+		return friendship.following
 
 	def is_followed_by_me(self, handle):
-		return True
+		friendship = self.api.show_friendship(
+			source_screen_name=str(self.api.me().screen_name),
+			target_screen_name=handle)[0]
+
+		print friendship
+		return friendship.followed_by
