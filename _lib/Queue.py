@@ -1,14 +1,27 @@
+from pymongo import MongoClient
+
 __author__ = 'Jacek Aleksander Gruca'
 
 
-# This class provides persistence abstraction.
+# This class abstracts the queue stored via the persistence abstraction
 class Queue(object):
 	#
-	def get_all_items(self):
-		return ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p']
+	def __init__(self, store):
+		self.client = MongoClient()
+		self.db = self.client['twitterbot']
+		self.queue = self.client.twitterbot['queue']
+		self.store = store
 
-	def remove_items(self, items_to_remove):
-		return
+	def get_all_handles(self):
+		handles = []
+		for handle in self.queue.find():
+			handles.append(handle['twitter_handle'])
+		return handles
 
-	def append_items(self, items_to_append):
-		return
+	def remove_handles(self, handles_to_remove):
+		for handle in handles_to_remove:
+			self.queue.delete_one({'twitter_handle': handle})
+
+	def append_handles(self, handles_to_append):
+		for handle in handles_to_append:
+			self.queue.insert({'twitter_handle': handle})

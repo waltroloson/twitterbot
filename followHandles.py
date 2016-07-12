@@ -26,10 +26,13 @@ day_count = int(config.get('TwitterBot', 'day.count'))
 df = pandas.read_csv(args.INPUT_FILE)
 handles = df[pandas.notnull(df.Twitter)].Twitter.values.tolist()
 
-twitter_api = TwitterApi(config.get('TwitterBot', 'consumer.key'),
-								 config.get('TwitterBot', 'consumer.secret'),
-								 config.get('TwitterBot', 'access.token'),
-								 config.get('TwitterBot', 'access.token.secret'))
+handles = [handle.replace("@", "") for handle in handles]
+
+twitter_api = TwitterApi(
+	config.get('TwitterBot', 'consumer.key'),
+	config.get('TwitterBot', 'consumer.secret'),
+	config.get('TwitterBot', 'access.token'),
+	config.get('TwitterBot', 'access.token.secret'))
 
 handler = Handler(twitter_api, batch_count, day_count)
 handler.run(handles)
