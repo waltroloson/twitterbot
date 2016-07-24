@@ -6,11 +6,10 @@ __author__ = 'Jacek Aleksander Gruca'
 # This class abstracts the queue stored via the persistence abstraction
 class Queue(object):
 	#
-	def __init__(self, store):
+	def __init__(self):
 		self.client = MongoClient()
 		self.db = self.client['twitterbot']
 		self.queue = self.client.twitterbot['queue']
-		self.store = store
 
 	def get_all_handles(self):
 		handles = []
