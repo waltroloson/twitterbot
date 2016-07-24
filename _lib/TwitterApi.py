@@ -34,28 +34,8 @@ class TwitterApi(object):
 
 		return True
 
-	def follows_me(self, handle):
-		followers = self.api.followers_ids(self.my_screen_name)
-
-		if handle in followers:
-			print 'Handle ' + handle + ' follows me.'
-			return True
-
-		print 'Handle ' + handle + ' doesn\'t follow me.'
-		return False
-
 	def get_my_followers(self):
 		return self.api.followers(self.my_screen_name)
 
 	def get_my_followees(self):
 		return self.api.friends(self.my_screen_name)
-
-	def is_followed_by_me(self, handle):
-		followers = self.api.followers_ids(handle)
-
-		if self.my_screen_name in followers:
-			print 'I follow ' + handle + '.'
-			return True
-
-		print 'I don\'t follow ' + handle + '.'
-		return False
