@@ -10,37 +10,32 @@ class TwitterApi(object):
 		auth = tweepy.OAuthHandler(consumer_token, consumer_secret)
 		auth.set_access_token(access_token, access_token_secret)
 		self.api = tweepy.API(auth)
+		self.my_screen_name = str(self.api.me().screen_name)
 
 	def follow(self, handles_to_follow):
 
 		for handle_to_follow in handles_to_follow:
-			print handle_to_follow
-			if not self.is_followed_by_me(handle_to_follow):
-				if not self.api.create_friendship(handle_to_follow):
-					return False
+			print 'Following ' + handle_to_follow + '.'
+			if not self.api.create_friendship(handle_to_follow):
+				return False
 
 		return True
+
+	def requested_to_follow(self, handle):
+		print 'Checking if already requested to follow handle %s.' % handle
+		return self.api.get_user(handle).follow_request_sent
 
 	def unfollow(self, handles_to_unfollow):
 
 		for handle_to_unfollow in handles_to_unfollow:
+			print 'Unfollowing ' + handle_to_unfollow + '.'
 			if not self.api.destroy_friendship(handle_to_unfollow):
 				return False
 
 		return True
 
-	def follows_me(self, handle):
-		friendship = self.api.show_friendship(
-			source_screen_name=str(self.api.me().screen_name),
-			target_screen_name=handle)[0]
+	def get_my_followers(self):
+		return self.api.followers(self.my_screen_name)
 
-		print friendship
-		return friendship.following
-
-	def is_followed_by_me(self, handle):
-		friendship = self.api.show_friendship(
-			source_screen_name=str(self.api.me().screen_name),
-			target_screen_name=handle)[0]
-
-		print friendship
-		return friendship.followed_by
+	def get_my_followees(self):
+		return self.api.friends(self.my_screen_name)
