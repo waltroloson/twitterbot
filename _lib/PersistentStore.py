@@ -9,7 +9,7 @@ class PersistentStore(object):
 	def __init__(self):
 		self.client = MongoClient()
 		self.db = self.client['twitterbot']
-		self.all_handles = self.client.twitterbot['all-handles']
+		self.all_handles = self.client.twitterbot['allhandles']
 
 	def get_all_items(self):
 		items = []
