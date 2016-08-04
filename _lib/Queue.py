@@ -13,8 +13,8 @@ class Queue(object):
 
 	def get_all_handles(self):
 		handles = []
-		for handle in self.queue.find():
-			handles.append(handle['twitter_handle'])
+		for item in self.queue.find():
+			handles.append(item['twitter_handle'])
 		return handles
 
 	def remove_handles(self, handles_to_remove):
