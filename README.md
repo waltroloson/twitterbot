@@ -11,7 +11,7 @@ TwitterBot is a bot that follows handles on a specified list according to the lo
 1. Not follow anyone followed in the past year.
 1. Not follow anyone already following my handle.
 1. Unfollow the person after 30 days.
-1. Limit follows per day to 50.
+1. Process no more than 50 items in the queue per each invocation.
 1. If already following a person that is not following my handle and they have not been followed in the past year, unfollow them and then re-follow them in 30 days.
 
 ### What are TwitterBot's implementation details? ###

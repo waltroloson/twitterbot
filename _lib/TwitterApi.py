@@ -9,7 +9,7 @@ class TwitterApi(object):
 	def __init__(self, consumer_token, consumer_secret, access_token, access_token_secret):
 		auth = tweepy.OAuthHandler(consumer_token, consumer_secret)
 		auth.set_access_token(access_token, access_token_secret)
-		self.api = tweepy.API(auth)
+		self.api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=False)
 		self.my_screen_name = str(self.api.me().screen_name)
 
 	def follow(self, handles_to_follow):

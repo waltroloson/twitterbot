@@ -2,20 +2,20 @@ from dateutil.relativedelta import relativedelta
 from datetime import timedelta
 from datetime import datetime
 
-from _lib.Queue import Queue
-from _lib.PersistentStore import PersistentStore
+import sys
 
 __author__ = 'Jacek Aleksander Gruca'
 
 
+# This class contains the core of the TwitterBot logic.
 class Handler(object):
 	#
-	def __init__(self, twitter_api, batch_count, day_count):
+	def __init__(self, twitter_api, persistent_store, queue, batch_count, day_count):
 		self.batch_count = batch_count
 		self.day_count = day_count
 		self.api = twitter_api
-		self.store = PersistentStore()
-		self.queue = Queue()
+		self.store = persistent_store
+		self.queue = queue
 		self.time_now = None
 
 	def delete_removed_items(self, handles):
@@ -52,46 +52,6 @@ class Handler(object):
 			item.followed_on = self.time_now
 			self.store.update_item(item)
 
-	def process_queue(self, handles, handles_followed_in_the_past_year, handles_following_me, handles_i_follow):
-
-		i = 0
-		for handle in handles:
-			self.store.add_item(handle)
-			print
-			if handle in handles_followed_in_the_past_year:
-				print "Handle %s followed in the past year, skipping and adding to the back of the queue." % handle
-				self.queue.remove_handles([handle])
-				self.queue.append_handles([handle])
-				continue
-			if handle in handles_following_me:
-				print "Handle %s is following me, skipping and adding to the back of the queue." % handle
-				self.queue.remove_handles([handle])
-				self.queue.append_handles([handle])
-				continue
-			if handle in handles_i_follow:
-				print "I am following handle %s but they are not following me." % handle + \
-						" Unfollowing, marking as unfollowed_on_purpose and adding to " + \
-						"the back of the queue."
-				self.api.unfollow([handle])
-				self.store.mark_item(handle, 'unfollowed_on_purpose', self.time_now)
-				self.queue.remove_handles([handle])
-				self.queue.append_handles([handle])
-				continue
-			if i >= self.batch_count:
-				print "Concluded execution."
-				break
-			if self.api.requested_to_follow(handle):
-				"Already requested to follow %s." % handle
-				self.queue.remove_handles([handle])
-				self.queue.append_handles([handle])
-				break
-			self.api.follow([handle])
-			self.store.mark_item(handle, 'followed', 'True')
-			self.store.mark_item(handle, 'followed_on', self.time_now)
-			self.queue.remove_handles([handle])
-			self.queue.append_handles([handle])
-			i += 1
-
 	def run(self, input_handles):
 
 		self.time_now = datetime.now()
@@ -99,13 +59,17 @@ class Handler(object):
 		self.delete_removed_items(input_handles)
 		self.append_added_items(input_handles)
 
-		# unfollow all handles followed 30 days ago
+		# unfollow all handles followed 30 days ago or more
 		self.action_all_handles_marked_n_days_ago_or_more(
 			self.action_unfollow, "followed_on", self.day_count)
 
-		# follow all handles marked as unfollowed_on_purpose 30 days ago
+		# follow all handles marked as unfollowed_on_purpose 30 days ago or more
 		self.action_all_handles_marked_n_days_ago_or_more(
 			self.action_follow, "unfollowed_on_purpose", self.day_count)
+
+		handles_unfollowed_on_purpose = \
+			[item['twitter_handle'] for item in self.store.get_all_items_with_property_lte(
+				"unfollowed_on_purpose", self.time_now)]
 
 		handles_followed_in_the_past_year = \
 			[item['twitter_handle'] for item in self.store.get_all_items_with_property_gte(
@@ -116,6 +80,10 @@ class Handler(object):
 
 		print "Handles followed in the past year:"
 		print handles_followed_in_the_past_year
+		print
+
+		print "Handles unfollowed on purpose:"
+		print handles_unfollowed_on_purpose
 		print
 
 		print "Handles following me:"
@@ -131,16 +99,59 @@ class Handler(object):
 		print handles
 		print
 
-		print "Carrying out daily run."
+		print "Carrying out periodic run."
 
 		self.process_queue(handles, handles_followed_in_the_past_year, handles_following_me, handles_i_follow)
 
-# ___________ requirements __________
+	def process_queue(self, handles, handles_followed_in_the_past_year, handles_following_me, handles_i_follow):
+
+		i = 0
+		for handle in handles:
+			i += 1
+			if i > self.batch_count:
+				print "\nConcluding execution."
+				break
+			sys.stdout.write("\n%i / %i => " % (i, self.batch_count))
+			self.store.add_item(handle)
+			if handle in handles_followed_in_the_past_year:
+				print "Handle %s followed in the past year, skipping and adding to the back of the queue." % handle
+				self.queue.remove_handles([handle])
+				self.queue.append_handles([handle])
+				continue
+			if handle in handles_following_me:
+				print "Handle %s is following me, skipping and adding to the back of the queue." % handle
+				self.queue.remove_handles([handle])
+				self.queue.append_handles([handle])
+				continue
+			if handle in handles_i_follow:
+				print "I am following handle %s but they are not following me and they have not been followed" % handle + \
+						" in the past year." \
+						" Unfollowing, marking as unfollowed_on_purpose and adding to " + \
+						"the back of the queue."
+				self.api.unfollow([handle])
+				self.store.mark_item(handle, 'unfollowed_on_purpose', self.time_now)
+				self.queue.remove_handles([handle])
+				self.queue.append_handles([handle])
+				continue
+			if self.api.requested_to_follow(handle):
+				print "Already requested to follow %s." % handle
+				self.queue.remove_handles([handle])
+				self.queue.append_handles([handle])
+				continue
+			print "Following handle %s, marking as followed (followed_on=today) and adding to the back of the queue." \
+					% handle
+			self.api.follow([handle])
+			self.store.mark_item(handle, 'followed', 'True')
+			self.store.mark_item(handle, 'followed_on', self.time_now)
+			self.queue.remove_handles([handle])
+			self.queue.append_handles([handle])
+
+# ___________ Requirements __________
 # - Follow handles on a specific list (check)
 # - Track when they were last followed (check)
 # - Not follow anyone followed in the past year (check)
 # - Not follow anyone already following my handle (check)
 # - Unfollow the person after 30 days (check)
-# - Limit follows per day to 50 (question)
+# - Process no more than 50 items in the queue per each invocation (check)
 # - If already following a person that is not following my handle and they have not been followed
 # in the past year, unfollow them and then re-follow them in 30 days (check)

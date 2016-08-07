@@ -3,8 +3,10 @@ import pandas
 
 import ConfigParser
 
+from _lib.Queue import Queue
 from _lib.Handler import Handler
 from _lib.TwitterApi import TwitterApi
+from _lib.PersistentStore import PersistentStore
 
 __author__ = 'Jacek Aleksander Gruca'
 
@@ -26,7 +28,7 @@ day_count = int(config.get('TwitterBot', 'day.count'))
 df = pandas.read_csv(args.INPUT_FILE)
 handles = df[pandas.notnull(df.Twitter)].Twitter.values.tolist()
 
-handles = [handle.replace("@", "") for handle in handles]
+handles = [handle.replace("@", "").strip() for handle in handles]
 
 twitter_api = TwitterApi(
 	config.get('TwitterBot', 'consumer.key'),
@@ -34,5 +36,11 @@ twitter_api = TwitterApi(
 	config.get('TwitterBot', 'access.token'),
 	config.get('TwitterBot', 'access.token.secret'))
 
-handler = Handler(twitter_api, batch_count, day_count)
+mongodb_host = config.get('TwitterBot', 'mongodb.host')
+mongodb_port = config.getint('TwitterBot', 'mongodb.port')
+
+persistent_store = PersistentStore(mongodb_host, mongodb_port)
+queue = Queue(mongodb_host, mongodb_port)
+
+handler = Handler(twitter_api, persistent_store, queue, batch_count, day_count)
 handler.run(handles)
