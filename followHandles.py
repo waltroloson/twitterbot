@@ -36,11 +36,10 @@ twitter_api = TwitterApi(
 	config.get('TwitterBot', 'access.token'),
 	config.get('TwitterBot', 'access.token.secret'))
 
-mongodb_host = config.get('TwitterBot', 'mongodb.host')
-mongodb_port = config.getint('TwitterBot', 'mongodb.port')
+mongodb_uri = config.get('TwitterBot', 'mongodb.uri')
 
-persistent_store = PersistentStore(mongodb_host, mongodb_port)
-queue = Queue(mongodb_host, mongodb_port)
+persistent_store = PersistentStore(mongodb_uri)
+queue = Queue(mongodb_uri)
 
 handler = Handler(twitter_api, persistent_store, queue, batch_count, day_count)
 handler.run(handles)

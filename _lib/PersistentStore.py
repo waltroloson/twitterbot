@@ -6,8 +6,8 @@ __author__ = 'Jacek Aleksander Gruca'
 # This class provides MongoDB persistence abstraction.
 class PersistentStore(object):
 	#
-	def __init__(self, host, port):
-		self.client = MongoClient(host, port)
+	def __init__(self, uri):
+		self.client = MongoClient(uri)
 		self.db = self.client['twitterbot']
 		self.allhandles = self.client.twitterbot['allhandles']
 

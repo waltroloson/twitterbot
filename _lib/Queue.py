@@ -6,8 +6,8 @@ __author__ = 'Jacek Aleksander Gruca'
 # This class abstracts the queue stored in the underlying database.
 class Queue(object):
 	#
-	def __init__(self, host, port):
-		self.client = MongoClient(host, port)
+	def __init__(self, uri):
+		self.client = MongoClient(uri)
 		self.db = self.client['twitterbot']
 		self.queue = self.client.twitterbot['queue']
 
