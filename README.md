@@ -41,7 +41,16 @@ In the command line enter the directory containing this README file and type:
 $ python followHandles.py -h
 ```
 
-This will output the usage details. The parameter to specify is an input file with handles to be processed.
+This will output the usage details. The parameter to specify is an input CSV file with handles to be processed. This file should contain the following columns (same as sample file 'TwitterFollow-Walt.csv' provided):
+
+1. Name.
+1. Job.
+1. Title.
+1. Company. 
+1. Linkedin.
+1. Twitter.
+1. SIQ.
+1. Notes.
 
 ### What does a single TwitterBot execution entail? ###
 
