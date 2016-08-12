@@ -11,7 +11,7 @@ TwitterBot is a bot that follows handles on a specified list according to the lo
 1. Not follow anyone followed in the past year.
 1. Not follow anyone already following my handle.
 1. Unfollow the person after 30 days.
-1. Limit follows per day to 50.
+1. Process no more than 50 items in the queue per each invocation.
 1. If already following a person that is not following my handle and they have not been followed in the past year, unfollow them and then re-follow them in 30 days.
 
 ### What are TwitterBot's implementation details? ###
@@ -41,15 +41,24 @@ In the command line enter the directory containing this README file and type:
 $ python followHandles.py -h
 ```
 
-This will output the usage details. The parameter to specify is an input file with handles to be processed.
+This will output the usage details. The parameter to specify is an input CSV file with handles to be processed. This file should contain the following columns (same as sample file 'TwitterFollow-Walt.csv' provided):
+
+1. Name.
+1. Job.
+1. Title.
+1. Company. 
+1. Linkedin.
+1. Twitter.
+1. SIQ.
+1. Notes.
 
 ### What does a single TwitterBot execution entail? ###
 
 1. At the beginning TwitterBot will check whether the queue it maintains and the input list of handles is the same. If it is the same, it will proceed carrying out the logic described above. If there are differences between the queue and the list, it will take the following actions:
   1. Items in the input list, which are missing from the queue, will be added to the queue.
   1. Items in the queue, which are not in the input list, will be removed from the queue.
-  1. Please note that any items being followed will not be unfollowed when removed from the queue in the above step. (This behaviou may be amended)
-1. TwitterBot is limited by Twitter API rate limits defined here <https://dev.twitter.com/rest/public/rate-limits>. This means that TwitterBot will pause after it has reached any of the limits and sleep for the required number of minutes before processing further. (This is not yet implemented)
+  1. Please note that any items being followed will not be unfollowed when removed from the queue in the above step. (This behaviour may be amended)
+1. TwitterBot is limited by Twitter API rate limits defined here <https://dev.twitter.com/rest/public/rate-limits>. This means that TwitterBot will pause after it has reached any of the limits and sleep for the required number of minutes before processing further.
 
 ### What is TwitterBot's execution frequency? ###
 

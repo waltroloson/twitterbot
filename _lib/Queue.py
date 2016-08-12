@@ -3,11 +3,11 @@ from pymongo import MongoClient
 __author__ = 'Jacek Aleksander Gruca'
 
 
-# This class abstracts the queue stored via the persistence abstraction
+# This class abstracts the queue stored in the underlying database.
 class Queue(object):
 	#
-	def __init__(self):
-		self.client = MongoClient()
+	def __init__(self, uri):
+		self.client = MongoClient(uri)
 		self.db = self.client['twitterbot']
 		self.queue = self.client.twitterbot['queue']
 
