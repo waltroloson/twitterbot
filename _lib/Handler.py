@@ -7,7 +7,15 @@ import sys
 __author__ = 'Jacek Aleksander Gruca'
 
 
-# This class contains the core of the TwitterBot logic.
+# This class contains the core of the TwitterBot logic as defined below.
+# - Follow handles on a specific list.
+# - Track when they were last followed.
+# - Not follow anyone followed in the past year.
+# - Not follow anyone already following my handle.
+# - Unfollow the person after 30 days.
+# - Process no more than 50 items in the queue per each invocation.
+# - If already following a person that is not following my handle and they have not been followed
+# in the past year: unfollow them and then re-follow them in 30 days.
 class Handler(object):
 	#
 	def __init__(self, twitter_api, persistent_store, queue, batch_count, day_count):
@@ -30,6 +38,8 @@ class Handler(object):
 		items_to_add = set(handles).difference(set(items_in_queue))
 		self.queue.append_handles(items_to_add)
 
+	# this function is used to unfollow all handles after 30 days and to refollow
+	# handles unfollowed-on-purpose
 	def action_all_handles_marked_n_days_ago_or_more(self, action, property_name, day_count):
 
 		past_date = self.time_now - timedelta(days=day_count)
@@ -54,9 +64,13 @@ class Handler(object):
 
 	def run(self, input_handles):
 
+		# obtain the timestamp which will further on be considered as "now" until the end of this run
 		self.time_now = datetime.now()
 
+		# remove all items removed from the input file from the queue
 		self.delete_removed_items(input_handles)
+
+		# append all items added to the input file to the end of the queue
 		self.append_added_items(input_handles)
 
 		# unfollow all handles followed 30 days ago or more
@@ -145,13 +159,3 @@ class Handler(object):
 			self.store.mark_item(handle, 'followed_on', self.time_now)
 			self.queue.remove_handles([handle])
 			self.queue.append_handles([handle])
-
-# ___________ Requirements __________
-# - Follow handles on a specific list (check)
-# - Track when they were last followed (check)
-# - Not follow anyone followed in the past year (check)
-# - Not follow anyone already following my handle (check)
-# - Unfollow the person after 30 days (check)
-# - Process no more than 50 items in the queue per each invocation (check)
-# - If already following a person that is not following my handle and they have not been followed
-# in the past year, unfollow them and then re-follow them in 30 days (check)
