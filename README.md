@@ -34,6 +34,78 @@ The configuration of TwitterBot is stored in file config.ini. This file contains
 
 You will need to set up a Twitter application. You can create one here: <https://apps.twitter.com/>. Once you have it created navigate to the "Keys and Access Tokens" section for your Consumer Key, Consumer Secret, Access Token and Access Token Secret. These items should be input into the config.ini file.
 
+### How do I configure my MongoDB instance? ###
+
+1. Please follow the below commands. A useful resource to refer to is also: <http://www.codexpedia.com/devops/mongodb-authentication-setting/>.
+1. First install MongoDB by following the instructions for your operating system. We will assume you installed version 3.2. Ref. <https://docs.mongodb.com/manual/installation/?jmp=footer&_ga=1.175002593.2134140820.1471180198>
+1. Then enter the MongoDB shell by typing in the following in the command line:
+```sh
+$ mongo
+```
+
+1. Execute the following commands.
+```sh
+use admin;
+db.createUser(
+{
+user: "admin",
+pwd: "adminPassword",
+roles: [ { role: "root", db: "admin" } ]
+}
+);
+exit;
+```
+
+1. Shutdown your Mongo instance by following these instructions:
+<http://stackoverflow.com/questions/11774887/how-to-stop-mongo-db-in-one-command>.
+1. Locate your configuration file `mongod.conf`. It will be in /etc or /usr/local/etc or a similar directory.
+1. Edit this file by appending the following lines to it at the bottom. This will disable passwordless login from your localhost workstation, and will always require a password to log in.
+```sh
+setParameter:
+enableLocalhostAuthBypass: false
+security:
+authorization: enabled
+```
+1. Start your mongo instance again.
+```sh
+$ mongod --config /path/to/your/config/file/mongod.conf
+```
+
+1. Again enter the MongoDB shell by typing in the following in the command line.
+```sh
+$ mongo
+```
+
+1. Execute the following commands.
+```sh
+use admin;
+db.auth("admin", "adminPassword");
+use twitterbot;
+db.createUser(
+{
+user: "twitterbot",
+pwd: "twitterbotPassword",
+roles: [ { role: "dbAdmin", db: "twitterbot" }, { role: "readWrite", db: "twitterbot" } ]
+}
+);
+exit;
+```
+
+1. Then connect to your Mongo DB instance again (by typing `mongo` in the shell) and execute the following commands:
+```sh
+use twitterbot;
+db.auth('twitterbot','twitterbotPassword');
+db.createCollection('queue');
+db.createCollection('allhandles');
+db.queue.find();
+db.allhandles.find();
+exit;
+```
+
+1. The above commands validate yout MongoDB set up. If they fail, don't proceed further but instead try to identify which of the previous steps is causing the problem.
+
+1. Finally set up your MongoDB URI in file config.ini.
+
 ### How do I begin with TwitterBot? ###
 
 In the command line enter the directory containing this README file and type:
