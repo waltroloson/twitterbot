@@ -3,7 +3,8 @@ import tweepy
 __author__ = 'Jacek Aleksander Gruca'
 
 
-# This class provides persistence abstraction.
+# This class is a TwitterAPI wrapper providing basic operations used by TwitterBot. It uses tweepy to
+# interact with TwitterAPI.
 class TwitterApi(object):
 	#
 	def __init__(self, consumer_token, consumer_secret, access_token, access_token_secret):
@@ -13,12 +14,10 @@ class TwitterApi(object):
 		self.my_screen_name = str(self.api.me().screen_name)
 
 	def follow(self, handles_to_follow):
-
 		for handle_to_follow in handles_to_follow:
 			print 'Following ' + handle_to_follow + '.'
 			if not self.api.create_friendship(handle_to_follow):
 				return False
-
 		return True
 
 	def requested_to_follow(self, handle):
@@ -26,12 +25,10 @@ class TwitterApi(object):
 		return self.api.get_user(handle).follow_request_sent
 
 	def unfollow(self, handles_to_unfollow):
-
 		for handle_to_unfollow in handles_to_unfollow:
 			print 'Unfollowing ' + handle_to_unfollow + '.'
 			if not self.api.destroy_friendship(handle_to_unfollow):
 				return False
-
 		return True
 
 	def get_my_followers(self):

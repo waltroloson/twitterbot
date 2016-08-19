@@ -3,7 +3,7 @@ from pymongo import MongoClient
 __author__ = 'Jacek Aleksander Gruca'
 
 
-# This class provides MongoDB persistence abstraction.
+# This class provides persistence abstraction for storing information about Twitter handles processed.
 class PersistentStore(object):
 	#
 	def __init__(self, uri):
@@ -24,10 +24,8 @@ class PersistentStore(object):
 		return list(self.allhandles.find({property_key: {"$gt": property_value}}))
 
 	def mark_item(self, handle, property_name, property_value):
-
 		item = self.allhandles.find_one({'twitter_handle': handle})
 		item[property_name] = property_value
-
 		self.allhandles.update({'twitter_handle': handle}, {"$set": item})
 
 	def add_item(self, handle):
