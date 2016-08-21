@@ -87,7 +87,7 @@ $ mongod --config /path/to/your/config/file/mongod.conf
 $ mongo
 ```
 
-1. Execute the following commands.
+1. Execute the following commands. Again make sure the bottom command 'exit' executes and that the mongo shell quits as a result.
 ```sh
 use admin;
 db.auth("admin", "adminPassword");
@@ -102,7 +102,7 @@ roles: [ { role: "dbAdmin", db: "twitterbot" }, { role: "readWrite", db: "twitte
 exit;
 ```
 
-1. Then connect to your Mongo DB instance again (by typing `mongo` in the shell) and execute the following commands:
+1. Then connect to your Mongo DB instance again (by typing `mongo` in the shell) and execute the following commands. Again remember about the 'exit' command.
 ```sh
 use twitterbot;
 db.auth('twitterbot','twitterbotPassword');
@@ -113,7 +113,7 @@ db.allhandles.find();
 exit;
 ```
 
-1. The above commands validate yout MongoDB set up. If they fail, don't proceed further but instead try to identify which of the previous steps is causing the problem.
+1. The above commands validate your MongoDB set up. If they fail, don't proceed further but instead try to identify which of the previous steps is causing the problem.
 
 1. Finally set up your MongoDB URI in file config.ini.
 
