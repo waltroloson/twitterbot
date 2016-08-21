@@ -77,10 +77,10 @@ $ mongod --config /path/to/your/config/file/mongod.conf
 ```
 
 1. If at any step in this part you get into problems, carry out the following.
-..+Go back into the `mongod.conf` file and set the 'enableLocalhostAuthBypass' flag to 'true'.
-..+Restart the mongo instance as instructed above.
-..+Start up the mongo shell.
-..+Proceed again starting at step [create-admin-user] above.
+   + Go back into the `mongod.conf` file and set the 'enableLocalhostAuthBypass' flag to 'true'.
+   + Restart the mongo instance as instructed above.
+   + Start up the mongo shell.
+   + Proceed again starting at step [create-admin-user] above.
 
 1. Again enter the MongoDB shell by typing in the following in the command line.
 ```sh
