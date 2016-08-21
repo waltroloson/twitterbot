@@ -42,8 +42,7 @@ You will need to set up a Twitter application. You can create one here: <https:/
 ```sh
 $ mongo
 ```
-
-1. Execute the following commands.
+1. Execute the following commands. Make sure the 'exit' command at the bottom is executed and that the mongo shell exits as a result.
 ```sh
 use admin;
 db.createUser(
@@ -55,7 +54,6 @@ roles: [ { role: "root", db: "admin" } ]
 );
 exit;
 ```
-
 1. Shutdown your Mongo instance by following these instructions:
 <http://stackoverflow.com/questions/11774887/how-to-stop-mongo-db-in-one-command>.
 1. Locate your configuration file `mongod.conf`. It will be in /etc or /usr/local/etc or a similar directory.
@@ -70,12 +68,15 @@ authorization: enabled
 ```sh
 $ mongod --config /path/to/your/config/file/mongod.conf
 ```
-
+1. If at any step in this part you get into problems, carry out the following.
+..+Go back into the `mongod.conf` file and set the 'enableLocalhostAuthBypass' flag to 'true'.
+..+Restart the mongo instance as instructed above.
+..+Start up the mongo shell.
+..+Proceed again starting at step 4. 
 1. Again enter the MongoDB shell by typing in the following in the command line.
 ```sh
 $ mongo
 ```
-
 1. Execute the following commands.
 ```sh
 use admin;
@@ -90,7 +91,6 @@ roles: [ { role: "dbAdmin", db: "twitterbot" }, { role: "readWrite", db: "twitte
 );
 exit;
 ```
-
 1. Then connect to your Mongo DB instance again (by typing `mongo` in the shell) and execute the following commands:
 ```sh
 use twitterbot;
@@ -101,9 +101,7 @@ db.queue.find();
 db.allhandles.find();
 exit;
 ```
-
 1. The above commands validate yout MongoDB set up. If they fail, don't proceed further but instead try to identify which of the previous steps is causing the problem.
-
 1. Finally set up your MongoDB URI in file config.ini.
 
 ### How do I begin with TwitterBot? ###
