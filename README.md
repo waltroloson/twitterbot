@@ -42,7 +42,7 @@ You will need to set up a Twitter application. You can create one here: <https:/
 ```sh
 $ mongo
 ```
-1. Execute the following commands. Make sure the 'exit' command at the bottom is executed and that the mongo shell exits as a result.
+1. [create-admin-user] Execute the following commands. Make sure the 'exit' command at the bottom is executed and that the mongo shell exits as a result.
 ```sh
 use admin;
 db.createUser(
