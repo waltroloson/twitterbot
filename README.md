@@ -66,9 +66,9 @@ exit;
 1. Edit this file by appending the following lines to it at the bottom. This will disable passwordless login from your localhost workstation, and will always require a password to log in.
 ```sh
 setParameter:
-enableLocalhostAuthBypass: false
+  enableLocalhostAuthBypass: false
 security:
-authorization: enabled
+  authorization: enabled
 ```
 
 1. Start your mongo instance again.
